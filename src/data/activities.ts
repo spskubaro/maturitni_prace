@@ -18,14 +18,14 @@ export const defaultActivities: Activity[] = [
   },
   {
     id: "exercise",
-    name: "Cviceni",
+    name: "Cvičení",
     category: ACTIVITY_CATEGORIES.HEALTH,
     pointsPerHour: POINTS.EXERCISE,
     color: "hsl(30, 90%, 60%)",
   },
   {
     id: "reading",
-    name: "Cteni",
+    name: "Čtení",
     category: ACTIVITY_CATEGORIES.EDUCATION,
     pointsPerHour: POINTS.READING,
     color: "hsl(280, 60%, 55%)",
@@ -39,7 +39,7 @@ export const defaultActivities: Activity[] = [
   },
   {
     id: "coding",
-    name: "Programovani",
+    name: "Programování",
     category: ACTIVITY_CATEGORIES.EDUCATION,
     pointsPerHour: POINTS.CODING,
     color: "hsl(200, 70%, 50%)",

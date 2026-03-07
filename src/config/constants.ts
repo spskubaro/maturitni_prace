@@ -85,36 +85,36 @@ export const TABLES = {
 
 export const MOTIVATIONAL_MESSAGES = {
   SESSION_COMPLETE: [
-    "Skvela prace!",
-    "Vyborne!",
-    "Pokracuj dal!",
-    "Jsi sampion!",
-    "Uzasne!",
+    "Skvělá práce!",
+    "Výborně!",
+    "Pokračuj dál!",
+    "Jsi šampion!",
+    "Úžasné!",
   ],
   MOUNTAIN_COMPLETE: [
     "Zdolal jsi horu!",
-    "Vrchol dosazen!",
-    "Gratulujeme k vystupu!",
-    "Dalsi hora za tebou!",
+    "Vrchol dosažen!",
+    "Gratulujeme k výstupu!",
+    "Další hora za tebou!",
   ],
   DAILY_GOAL_REACHED: [
-    "Denni cil splnen!",
+    "Denní cíl splněn!",
     "Dnes jsi exceloval!",
-    "100 procent splneno!",
+    "100 procent splněno!",
   ],
   STREAK_MILESTONE: [
-    "Mas skvelou serii!",
-    "Konzistence je klic!",
-    "Neuveritelna serie!",
+    "Máš skvělou sérii!",
+    "Konzistence je klíč!",
+    "Neuvěřitelná série!",
   ],
 } as const;
 
 export const ACTIVITY_CATEGORIES = {
-  EDUCATION: "Vzdelavani",
+  EDUCATION: "Vzdělávání",
   PRODUCTIVITY: "Produktivita",
-  HEALTH: "Zdravi",
+  HEALTH: "Zdraví",
   CREATIVITY: "Kreativita",
-  HOUSEHOLD: "Domacnost",
+  HOUSEHOLD: "Domácnost",
 } as const;
 
 export function getRandomMessage(messages: readonly string[]): string {
