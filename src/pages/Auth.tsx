@@ -15,12 +15,31 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const forceLogout = searchParams.get("logout") === "1";
+  const [logoutInProgress, setLogoutInProgress] = useState(forceLogout);
 
   const defaultTab = searchParams.get("tab") === "signup" ? "signup" : "login";
 
   useEffect(() => {
-    if (user) navigate("/dashboard");
-  }, [user, navigate]);
+    if (!forceLogout) {
+      setLogoutInProgress(false);
+      return;
+    }
+
+    const runForcedLogout = async () => {
+      try {
+        await supabase.auth.signOut({ scope: "local" });
+      } finally {
+        setLogoutInProgress(false);
+      }
+    };
+
+    void runForcedLogout();
+  }, [forceLogout]);
+
+  useEffect(() => {
+    if (!logoutInProgress && user) navigate("/dashboard");
+  }, [logoutInProgress, user, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

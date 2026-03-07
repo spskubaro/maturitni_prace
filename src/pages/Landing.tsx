@@ -101,12 +101,12 @@ const Landing = () => {
             Sleduj čas, získávej body a zdolávej světové hory
           </p>
           <div className={`flex gap-4 justify-center flex-wrap ${isVisible ? 'animate-fade-in animation-delay-400' : 'opacity-0'}`}>
-            <Link to="/auth?tab=signup">
+            <Link to="/auth?tab=signup&logout=1">
               <Button size="lg" className="text-lg px-8 shadow-lg hover:shadow-xl transition-shadow">
                 Registrovat se
               </Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/auth?tab=login&logout=1">
               <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 backdrop-blur hover:bg-white/20 transition-colors border-white/20 text-white hover:text-white">
                 Už mám účet
               </Button>
@@ -241,12 +241,12 @@ const Landing = () => {
             Vytvoř si účet a zdolej svou první horu
           </p>
           <div className="flex gap-4 justify-center flex-wrap animate-fade-in animation-delay-400">
-            <Link to="/auth?tab=signup">
+            <Link to="/auth?tab=signup&logout=1">
               <Button size="lg" variant="secondary" className="text-lg px-10 py-6 shadow-2xl hover:shadow-xl transition-all hover:scale-105 group">
                 Registrovat se
               </Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/auth?tab=login&logout=1">
               <Button size="lg" variant="outline" className="text-lg px-10 py-6 bg-white/10 backdrop-blur hover:bg-white/20 border-white/30 hover:border-white/50 transition-all">
                 Přihlásit se
               </Button>

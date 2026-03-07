@@ -97,10 +97,10 @@ export const Navbar = () => {
                   <Moon className="w-5 h-5" />
                 )}
               </Button>
-              <Link to="/auth">
+              <Link to="/auth?tab=login&logout=1">
                 <Button variant="ghost">Přihlásit se</Button>
               </Link>
-              <Link to="/auth?tab=signup">
+              <Link to="/auth?tab=signup&logout=1">
                 <Button>Registrovat</Button>
               </Link>
             </>
@@ -182,12 +182,12 @@ export const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/auth?tab=login&logout=1" onClick={() => setMobileMenuOpen(false)}>
                       <Button variant="ghost" className="w-full">
                         Přihlásit se
                       </Button>
                     </Link>
-                    <Link to="/auth?tab=signup" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/auth?tab=signup&logout=1" onClick={() => setMobileMenuOpen(false)}>
                       <Button className="w-full">Registrovat</Button>
                     </Link>
                   </>
