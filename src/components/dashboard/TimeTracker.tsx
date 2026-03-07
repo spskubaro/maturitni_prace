@@ -106,14 +106,14 @@ export const TimeTracker = ({ onSessionComplete }: TimeTrackerProps) => {
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
     toast.info(
-      notificationsEnabled ? "Notifikace vypnuty" : "Notifikace zapnuty"
+      notificationsEnabled ? "Notifikace vypnuté." : "Notifikace zapnuté."
     );
   };
 
   const toggleSoundEffects = () => {
     const newValue = toggleSound();
     setSoundEnabled(newValue);
-    toast.info(newValue ? "Zvuky zapnuty" : "Zvuky vypnuty");
+    toast.info(newValue ? "Zvuky zapnuté." : "Zvuky vypnuté.");
   };
 
   const handleStop = () => {

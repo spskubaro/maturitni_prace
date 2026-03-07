@@ -26,8 +26,6 @@ export const MountainSelector = ({
   const difficultyOrder = ['easy', 'medium', 'hard', 'extreme'];
 
   const canSelect = (mountain: Mountain) => {
-    if (completedMountains.includes(mountain.id)) return false;
-    
     if (mountain.id === currentMountainId) return false;
     
     if (!currentMountain) return false;

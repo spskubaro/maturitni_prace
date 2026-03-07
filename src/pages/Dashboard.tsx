@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSound } from "@/hooks/useSound";
 import { mountains } from "@/data/mountains";
 import { TimeSession } from "@/types/mountain";
+import { getFriendlyErrorMessage } from "@/types/errors";
 import { TimeTracker } from "@/components/dashboard/TimeTracker";
 import { StatsOverview } from "@/components/dashboard/StatsOverview";
 import { DailyGoals } from "@/components/dashboard/DailyGoals";
@@ -67,7 +68,7 @@ const Dashboard = () => {
       setSessions(sessionsData || []);
     } catch (error) {
       logger.error("Chyba při načítání dat:", error);
-      toast.error("Nepodařilo se načíst data.");
+      toast.error(getFriendlyErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -135,7 +136,7 @@ const Dashboard = () => {
       await loadUserData();
     } catch (error) {
       logger.error("Chyba při ukládání session:", error);
-      toast.error("Nepodařilo se uložit session.");
+      toast.error(getFriendlyErrorMessage(error));
     }
   };
 
@@ -168,7 +169,7 @@ const Dashboard = () => {
       await loadUserData();
     } catch (error) {
       logger.error("Chyba při změně hory:", error);
-      toast.error("Nepodařilo se změnit horu.");
+      toast.error(getFriendlyErrorMessage(error));
     }
   };
 

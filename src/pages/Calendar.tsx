@@ -189,7 +189,7 @@ const Calendar = () => {
                 <ChevronLeft className="w-4 h-4" />
               </Button>
 
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-xl md:text-2xl">
                 {format(currentMonth, "LLLL yyyy", { locale: cs })}
               </CardTitle>
 
@@ -204,15 +204,16 @@ const Calendar = () => {
           </CardHeader>
 
           <CardContent>
-            <div className="grid grid-cols-7 gap-2 mb-2">
+            <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 min-w-[560px]">
               {["Po", "Út", "St", "Čt", "Pá", "So", "Ne"].map((day) => (
-                <div key={day} className="text-center font-semibold text-sm text-muted-foreground p-2">
+                <div key={day} className="text-center font-semibold text-xs md:text-sm text-muted-foreground p-1 md:p-2">
                   {day}
                 </div>
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-2">
+            <div className="overflow-x-auto pb-2">
+            <div className="grid grid-cols-7 gap-1 md:gap-2 min-w-[560px]">
               {calendarDays.map((day) => {
                 const dayActivities = getActivitiesForDay(day);
                 const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -221,7 +222,7 @@ const Calendar = () => {
                 return (
                   <div
                     key={day.toISOString()}
-                    className={`min-h-24 p-2 border rounded-lg transition-all cursor-pointer hover:shadow-md ${
+                    className={`min-h-20 md:min-h-24 p-1.5 md:p-2 border rounded-lg transition-all cursor-pointer hover:shadow-md ${
                       !isCurrentMonth ? "bg-muted/30 opacity-50" : "bg-background"
                     } ${isDayToday ? "border-primary border-2" : ""} ${
                       selectedDay && isSameDay(day, selectedDay) ? "bg-accent/20 border-accent" : ""
@@ -235,11 +236,11 @@ const Calendar = () => {
                       }
                     }}
                   >
-                    <div className={`text-sm font-semibold mb-1 ${isDayToday ? "text-primary" : ""}`}>
+                    <div className={`text-xs md:text-sm font-semibold mb-1 ${isDayToday ? "text-primary" : ""}`}>
                       {format(day, "d")}
                     </div>
 
-                    <div className="space-y-1 max-h-16 overflow-y-auto">
+                    <div className="space-y-1 max-h-14 md:max-h-16 overflow-y-auto">
                       {dayActivities.map((activity) => {
                         const activityData = defaultActivities.find(
                           (a) => a.id === activity.activity_id
@@ -247,7 +248,7 @@ const Calendar = () => {
                         return (
                           <div
                             key={activity.id}
-                            className={`text-xs p-1 rounded truncate ${
+                            className={`text-[10px] md:text-xs p-1 rounded truncate ${
                               activity.completed ? "opacity-50 line-through" : ""
                             }`}
                             style={{
@@ -263,6 +264,7 @@ const Calendar = () => {
                   </div>
                 );
               })}
+            </div>
             </div>
           </CardContent>
         </Card>

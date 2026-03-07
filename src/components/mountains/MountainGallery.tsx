@@ -42,7 +42,6 @@ export const MountainGallery = ({
   };
 
   const canSelect = (mountain: Mountain) => {
-    if (completedMountains.includes(mountain.id)) return false;
     if (mountain.id === currentMountainId) return false;
     
     if (!currentMountain) return false;
