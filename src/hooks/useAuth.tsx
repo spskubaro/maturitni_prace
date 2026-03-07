@@ -21,22 +21,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let authSubscription: { unsubscribe: () => void } | undefined;
+    const result = supabase.auth.onAuthStateChange((_event, sessionValue) => {
+      setSession(sessionValue);
+      setUser(sessionValue?.user ?? null);
+      setLoading(false);
+    });
+    const authSubscription = result.data.subscription;
 
-    const setupAuth = () => {
-      const result = supabase.auth.onAuthStateChange((_event, sessionValue) => {
-        setSession(sessionValue);
-        setUser(sessionValue?.user ?? null);
-        setLoading(false);
-      });
-
-      authSubscription = result.data.subscription;
-    };
-
-    setupAuth();
-
-    supabase.auth.getSession().then((result) => {
-      const currentSession = result.data.session;
+    supabase.auth.getSession().then((resultValue) => {
+      const currentSession = resultValue.data.session;
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setLoading(false);
@@ -48,18 +41,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signOut = async () => {
-    // Lokální odhlášení je spolehlivější na mobilu i při slabém připojení.
-    const { error } = await supabase.auth.signOut({ scope: "local" });
+    let signOutErrorMessage: string | null = null;
 
-    if (error) {
-      logger.error("Chyba při odhlášení:", error);
-      toast.error("Odhlášení se nepovedlo.", { description: error.message });
-      return;
+    try {
+      const { error } = await supabase.auth.signOut({ scope: "local" });
+      if (error) {
+        signOutErrorMessage = error.message;
+        logger.warn("Lokální odhlášení vrátilo chybu:", error);
+      }
+    } catch (error) {
+      signOutErrorMessage = error instanceof Error ? error.message : "Neznámá chyba";
+      logger.warn("Odhlášení vyhodilo výjimku:", error);
+    } finally {
+      // I při chybě odhlášení nechceme blokovat uživatele v UI.
+      setSession(null);
+      setUser(null);
+      navigate("/");
     }
 
-    setSession(null);
-    setUser(null);
-    navigate("/");
+    if (signOutErrorMessage) {
+      toast.message("Byl jsi odhlášen v této aplikaci.", {
+        description: "Pokud by přihlášení zůstalo, obnov stránku.",
+      });
+    }
   };
 
   return (
