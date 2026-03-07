@@ -672,6 +672,7 @@ export function MountainIllustration({ mountainId, className = "" }: MountainIll
 interface MountainSilhouetteProps {
   mountain: Mountain;
   progress: number; // 0-100
+  currentPoints: number;
   isCompleted: boolean;
   isCurrent: boolean;
   onClick?: () => void;
@@ -680,6 +681,7 @@ interface MountainSilhouetteProps {
 export const MountainSilhouette = ({
   mountain,
   progress,
+  currentPoints,
   isCompleted,
   isCurrent,
   onClick,
@@ -752,6 +754,12 @@ export const MountainSilhouette = ({
             )}
             style={{ width: `${progress}%` }}
           />
+        </div>
+        <div className="mt-1.5 flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground">
+          <span className="truncate">Body na hoře</span>
+          <span className="font-semibold whitespace-nowrap">
+            {Math.max(0, Math.floor(currentPoints))} / {mountain.pointsRequired}
+          </span>
         </div>
       </div>
     </div>

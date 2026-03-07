@@ -41,6 +41,12 @@ export const MountainGallery = ({
     return Math.min(100, (pts / mountain.pointsRequired) * 100);
   };
 
+  const getMountainPoints = (mountain: Mountain) => {
+    if (completedMountains.includes(mountain.id)) return mountain.pointsRequired;
+    if (mountain.id === currentMountainId) return currentMountainPoints;
+    return mountainProgress?.[mountain.id] ?? 0;
+  };
+
   const canSelect = (mountain: Mountain) => {
     if (mountain.id === currentMountainId) return false;
     
@@ -109,6 +115,7 @@ export const MountainGallery = ({
                 key={mountain.id}
                 mountain={mountain}
                 progress={progress}
+                currentPoints={getMountainPoints(mountain)}
                 isCompleted={isCompleted}
                 isCurrent={isCurrent}
                 onClick={selectable ? () => onSelectMountain(mountain.id) : undefined}
