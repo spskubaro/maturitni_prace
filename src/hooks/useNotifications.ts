@@ -1,4 +1,5 @@
-﻿import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { logger } from "@/lib/logger";
 
 export const useNotifications = () => {
   const permissionGranted = useRef(false);
@@ -15,20 +16,33 @@ export const useNotifications = () => {
     }
   }, []);
 
-  const sendNotification = useCallback((title: string, options?: NotificationOptions) => {
+  const sendNotification = useCallback(async (title: string, options?: NotificationOptions) => {
     if (!("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
 
-    if (Notification.permission === "granted") {
-      new Notification(title, {
-        icon: "/favicon.ico",
-        badge: "/favicon.ico",
-        ...options,
-      });
+    const notificationOptions: NotificationOptions = {
+      icon: "/favicon.ico",
+      badge: "/favicon.ico",
+      ...options,
+    };
+
+    try {
+      if ("serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+          await registration.showNotification(title, notificationOptions);
+          return;
+        }
+      }
+
+      new Notification(title, notificationOptions);
+    } catch (error) {
+      logger.warn("Notifikaci se nepodařilo zobrazit.", error);
     }
   }, []);
 
   const notifyTimerRunning = useCallback((activityName: string, duration: string) => {
-    sendNotification("ClimbFlow - Časovač běží", {
+    void sendNotification("ClimbFlow - Časovač běží", {
       body: `${activityName}: ${duration}`,
       tag: "timer-running",
       requireInteraction: false,
@@ -36,7 +50,7 @@ export const useNotifications = () => {
   }, [sendNotification]);
 
   const notifySessionComplete = useCallback((activityName: string, points: number) => {
-    sendNotification("🎉 Session dokončena!", {
+    void sendNotification("🎉 Session dokončena!", {
       body: `${activityName} - získal jsi ${points} bodů`,
       tag: "session-complete",
       requireInteraction: false,
@@ -44,7 +58,7 @@ export const useNotifications = () => {
   }, [sendNotification]);
 
   const notifyMountainCompleted = useCallback((mountainName: string) => {
-    sendNotification("🏔️ Hora zdolána!", {
+    void sendNotification("🏔️ Hora zdolána!", {
       body: `Gratulujeme! Zdolal jsi ${mountainName}!`,
       tag: "mountain-complete",
       requireInteraction: true,
@@ -59,4 +73,3 @@ export const useNotifications = () => {
     permissionGranted: permissionGranted.current,
   };
 };
-
