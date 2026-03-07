@@ -112,7 +112,9 @@ const Mountains = () => {
         <div className="max-w-4xl mx-auto">
           <MountainSelector
             currentMountainId={progress.current_mountain_id}
+            currentMountainPoints={progress.current_mountain_points}
             completedMountains={progress.completed_mountains}
+            mountainProgress={progress.mountain_progress}
             onSelectMountain={handleSelectMountain}
           />
         </div>

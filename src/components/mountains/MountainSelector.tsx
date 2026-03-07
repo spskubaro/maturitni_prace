@@ -8,13 +8,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MountainSelectorProps {
   currentMountainId: string;
+  currentMountainPoints: number;
   completedMountains: string[];
+  mountainProgress: Record<string, number>;
   onSelectMountain: (mountainId: string) => void;
 }
 
 export const MountainSelector = ({
   currentMountainId,
+  currentMountainPoints,
   completedMountains,
+  mountainProgress,
   onSelectMountain,
 }: MountainSelectorProps) => {
   const sortedMountains = [...mountains].sort(
@@ -55,6 +59,12 @@ export const MountainSelector = ({
     }
   };
 
+  const getMountainPoints = (mountain: Mountain) => {
+    if (completedMountains.includes(mountain.id)) return mountain.pointsRequired;
+    if (mountain.id === currentMountainId) return currentMountainPoints;
+    return mountainProgress[mountain.id] ?? 0;
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -67,6 +77,11 @@ export const MountainSelector = ({
               const selectable = canSelect(mountain);
               const completed = completedMountains.includes(mountain.id);
               const isCurrent = mountain.id === currentMountainId;
+              const pointsOnMountain = getMountainPoints(mountain);
+              const progressPercent = Math.min(
+                100,
+                (pointsOnMountain / mountain.pointsRequired) * 100
+              );
 
               return (
                 <div
@@ -111,6 +126,20 @@ export const MountainSelector = ({
                       <p className="text-sm text-muted-foreground">
                         {mountain.pointsRequired} bodů k dokončení
                       </p>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>Napracováno</span>
+                          <span className="font-semibold whitespace-nowrap">
+                            {Math.max(0, Math.floor(pointsOnMountain))} / {mountain.pointsRequired}
+                          </span>
+                        </div>
+                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-500"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
                     {selectable && (
                       <Button
