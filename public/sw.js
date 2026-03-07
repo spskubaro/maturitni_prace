@@ -1,5 +1,5 @@
 ﻿
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const STATIC_CACHE = `climbflow-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `climbflow-dynamic-${CACHE_VERSION}`;
 
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
 ];
 
 const STATIC_EXTENSIONS = /\.(js|css|woff2?|ttf|otf|eot|png|jpg|jpeg|gif|svg|webp|ico)$/i;
+const APP_ASSET_EXTENSIONS = /\.(js|css)$/i;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -42,6 +43,18 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   if (url.hostname.includes("supabase.co")) return;
   if (url.protocol !== "http:" && url.protocol !== "https:") return;
+
+  if (request.mode === "navigate") {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  // Vite assety (JS/CSS) bereme ze site prednostne, aby po deployi
+  // nevznikaly chyby pri refreshi z neaktualni cache.
+  if (APP_ASSET_EXTENSIONS.test(url.pathname)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
 
   if (STATIC_EXTENSIONS.test(url.pathname)) {
     event.respondWith(cacheFirst(request));
