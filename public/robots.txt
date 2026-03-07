@@ -1,0 +1,3 @@
+# Soubor pro vyhledavace - povoluje indexaci celeho webu
+User-agent: *
+Allow: /
