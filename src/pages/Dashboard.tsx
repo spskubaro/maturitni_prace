@@ -97,8 +97,19 @@ const Dashboard = () => {
       if (insertError) throw insertError;
 
       const newTotal = progress.total_points + points;
-      const currentId = progress.current_mountain_id;
-      const currentPoints = (progress.mountain_progress[currentId] ?? progress.current_mountain_points) + points;
+      const sorted = [...mountains].sort((a, b) => a.pointsRequired - b.pointsRequired);
+      const originalCurrentId = progress.current_mountain_id;
+      const firstUncompleted = sorted.find((m) => !progress.completed_mountains.includes(m.id));
+      const currentId =
+        progress.completed_mountains.includes(originalCurrentId) && firstUncompleted
+          ? firstUncompleted.id
+          : originalCurrentId;
+
+      const basePoints =
+        currentId === originalCurrentId
+          ? progress.current_mountain_points
+          : (progress.mountain_progress[currentId] ?? 0);
+      const currentPoints = basePoints + points;
 
       const newMountainProgress = { ...progress.mountain_progress, [currentId]: currentPoints };
       let newCurrentMountainId = currentId;
@@ -111,10 +122,13 @@ const Dashboard = () => {
         playSound("mountain");
         toast.success(`Zdolal jsi ${currentMountain.name}!`);
 
-        const sorted = [...mountains].sort((a, b) => a.pointsRequired - b.pointsRequired);
         const i = sorted.findIndex((m) => m.id === currentId);
-        if (i >= 0 && i < sorted.length - 1) {
-          newCurrentMountainId = sorted[i + 1].id;
+        const nextMountain =
+          i >= 0
+            ? sorted.slice(i + 1).find((m) => !newCompleted.includes(m.id))
+            : undefined;
+        if (nextMountain) {
+          newCurrentMountainId = nextMountain.id;
           newCurrentMountainPoints = currentPoints - currentMountain.pointsRequired;
         }
       }
