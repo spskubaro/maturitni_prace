@@ -171,8 +171,8 @@ export const Navbar = () => {
                     <Button
                       variant="ghost"
                       className="w-full justify-start"
-                      onClick={() => {
-                        signOut();
+                      onClick={async () => {
+                        await signOut();
                         setMobileMenuOpen(false);
                       }}
                     >

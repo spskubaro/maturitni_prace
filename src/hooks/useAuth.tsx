@@ -1,7 +1,9 @@
-﻿import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 interface AuthContextType {
   user: User | null;
@@ -22,15 +24,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let authSubscription: { unsubscribe: () => void } | undefined;
 
     const setupAuth = () => {
-      const result = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
-
-        if (session && session.user) {
-          setUser(session.user);
-        } else {
-          setUser(null);
-        }
-
+      const result = supabase.auth.onAuthStateChange((_event, sessionValue) => {
+        setSession(sessionValue);
+        setUser(sessionValue?.user ?? null);
         setLoading(false);
       });
 
@@ -41,29 +37,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     supabase.auth.getSession().then((result) => {
       const currentSession = result.data.session;
-
       setSession(currentSession);
-      if (currentSession && currentSession.user) {
-        setUser(currentSession.user);
-      } else {
-        setUser(null);
-      }
+      setUser(currentSession?.user ?? null);
       setLoading(false);
     });
 
     return () => {
-      if (authSubscription) {
-        authSubscription.unsubscribe();
-      }
+      authSubscription?.unsubscribe();
     };
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Lokální odhlášení je spolehlivější na mobilu i při slabém připojení.
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+
+    if (error) {
+      logger.error("Chyba při odhlášení:", error);
+      toast.error("Odhlášení se nepovedlo.", { description: error.message });
+      return;
+    }
+
+    setSession(null);
+    setUser(null);
     navigate("/");
   };
 
-  return <AuthContext.Provider value={{ user, session, loading, signOut }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
