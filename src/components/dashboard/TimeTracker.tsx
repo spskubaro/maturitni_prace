@@ -38,7 +38,7 @@ export const TimeTracker = ({ onSessionComplete }: TimeTrackerProps) => {
     isRunning,
     isPaused,
     setSeconds,
-    setSelectedActivity,
+    (activity) => setSelectedActivity(activity as Activity | null),
     defaultActivities,
     setIsRunning,
     setIsPaused

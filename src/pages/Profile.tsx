@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, Download, User, Mail, Trash2 } from "lucide-react";
+import { Loader2, Download, User, Mail, Trash2, LogOut, Pencil, Check, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { defaultActivities } from "@/data/activities";
 import { TimeSession } from "@/types/mountain";
 import {
@@ -33,6 +34,10 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState<TimeSession[]>([]);
   const [progress, setProgress] = useState<ProfileProgress | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [savingUsername, setSavingUsername] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -44,7 +49,7 @@ const Profile = () => {
     if (!user) return
 
     try {
-      const [sessionsRes, progressRes] = await Promise.all([
+      const [sessionsRes, progressRes, profileRes] = await Promise.all([
         supabase
           .from("time_sessions")
           .select("*")
@@ -55,6 +60,11 @@ const Profile = () => {
           .select("*")
           .eq("user_id", user.id)
           .single(),
+        supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single(),
       ]);
 
       if (sessionsRes.error) throw sessionsRes.error;
@@ -62,6 +72,9 @@ const Profile = () => {
 
       setSessions(sessionsRes.data || []);
       setProgress(progressRes.data);
+      const name = profileRes.data?.username || "";
+      setUsername(name);
+      setUsernameInput(name);
     } catch (error) {
       logger.error("Chyba při načítání dat:", error);
       toast.error("Chyba při načítání dat");
@@ -133,6 +146,46 @@ const Profile = () => {
     toast.success("CSV exportováno!");
   };
 
+  const saveUsername = async () => {
+    if (!user) return;
+    const trimmed = usernameInput.trim();
+    if (trimmed.length < 3) {
+      toast.error("Uživatelské jméno musí mít alespoň 3 znaky");
+      return;
+    }
+    if (trimmed.length > 30) {
+      toast.error("Uživatelské jméno může mít nejvýše 30 znaků");
+      return;
+    }
+    setSavingUsername(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ username: trimmed })
+        .eq("id", user.id);
+      if (error) throw error;
+      setUsername(trimmed);
+      setEditingUsername(false);
+      toast.success("Uživatelské jméno uloženo");
+    } catch (error) {
+      logger.error("Chyba při ukládání username:", error);
+      toast.error("Chybu při ukládání jména");
+    } finally {
+      setSavingUsername(false);
+    }
+  };
+
+  const signOutAllDevices = async () => {
+    try {
+      await supabase.auth.signOut({ scope: "global" });
+      toast.success("Odhlášen/a ze všech zařízení");
+      navigate("/");
+    } catch (error) {
+      logger.error("Chyba při globálním odhlášení:", error);
+      toast.error("Chyba při odhlašování");
+    }
+  };
+
   const deleteAccount = async () => {
     if (!user) return;
 
@@ -179,6 +232,38 @@ const Profile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Uživatelské jméno</Label>
+                {editingUsername ? (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={usernameInput}
+                      onChange={(e) => setUsernameInput(e.target.value)}
+                      className="h-8 text-sm"
+                      maxLength={30}
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveUsername();
+                        if (e.key === "Escape") { setEditingUsername(false); setUsernameInput(username); }
+                      }}
+                    />
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={saveUsername} disabled={savingUsername}>
+                      {savingUsername ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 text-green-500" />}
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditingUsername(false); setUsernameInput(username); }}>
+                      <X className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{username || <span className="text-muted-foreground italic">nenastaveno</span>}</span>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 ml-1" onClick={() => setEditingUsername(true)}>
+                      <Pencil className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               <div className="space-y-2">
                 <Label>Email</Label>
                 <div className="flex items-center gap-2">
@@ -252,6 +337,24 @@ const Profile = () => {
               <Button onClick={exportCSV} className="w-full" variant="outline">
                 <Download className="w-4 h-4 mr-2" />
                 Exportovat jako CSV
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <LogOut className="w-5 h-5" />
+                Bezpečnost
+              </CardTitle>
+              <CardDescription>
+                Pokud ses přihlásil/a na více zařízeních, můžeš se odhlásit ze všech najednou
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={signOutAllDevices} variant="outline" className="w-full">
+                <LogOut className="w-4 h-4 mr-2" />
+                Odhlásit ze všech zařízení
               </Button>
             </CardContent>
           </Card>

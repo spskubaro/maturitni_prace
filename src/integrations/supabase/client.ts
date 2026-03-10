@@ -10,9 +10,9 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    // Udrzi session jen v ramci aktualni karty/okna (sessionStorage),
-    // po zavreni okna se uzivatel neprihlasi automaticky znovu.
-    storage: sessionStorage,
+    // localStorage - session prezije zavreni tabu/prohlizece a funguje
+    // spolecne ve vsech tabech stejneho prohlizece (standardni chovani)
+    storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
   },
