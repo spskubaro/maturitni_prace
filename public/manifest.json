@@ -1,7 +1,7 @@
 {
-  "name": "ClimbFlow - Time Management",
+  "name": "ClimbFlow - Správa času",
   "short_name": "ClimbFlow",
-  "description": "Time management aplikace s motivaci vystupu na nejznamejsi hory sveta",
+  "description": "Aplikace pro správu času s motivací výstupů na nejznámější hory světa",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -21,13 +21,13 @@
     {
       "name": "Dashboard",
       "short_name": "Dashboard",
-      "description": "Otevrit dashboard",
+      "description": "Otevřít dashboard",
       "url": "/dashboard",
       "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
     },
     {
       "name": "Statistiky",
-      "short_name": "Stats",
+      "short_name": "Statistiky",
       "description": "Zobrazit statistiky",
       "url": "/stats",
       "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]

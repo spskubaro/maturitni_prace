@@ -37,7 +37,7 @@ const steps: OnboardingStep[] = [
     icon: <span className="text-6xl">🏔️</span>,
   },
   {
-    title: "Odemykej achievementy 🏆",
+    title: "Odemykej úspěchy 🏆",
     description:
       "Plň milníky a získávej odznaky. Od prvních kroků až po legendární výkony!",
     icon: <span className="text-6xl">🏆</span>,

@@ -49,8 +49,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Vite assety (JS/CSS) bereme ze site prednostne, aby po deployi
-  // nevznikaly chyby pri refreshi z neaktualni cache.
+  // Vite assety (JS/CSS) bereme ze sítě přednostně, aby po deployi
+  // nevznikaly chyby při refreshi z neaktuální cache.
   if (APP_ASSET_EXTENSIONS.test(url.pathname)) {
     event.respondWith(networkFirst(request));
     return;
@@ -95,7 +95,7 @@ async function networkFirst(request) {
     const fallback = await caches.match("/index.html");
     if (fallback) return fallback;
 
-    return new Response("Offline - ClimbFlow neni dostupny bez internetu.", {
+    return new Response("Offline - ClimbFlow není dostupný bez internetu.", {
       status: 503,
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });

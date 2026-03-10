@@ -50,7 +50,7 @@ export const useNotifications = () => {
   }, [sendNotification]);
 
   const notifySessionComplete = useCallback((activityName: string, points: number) => {
-    void sendNotification("🎉 Session dokončena!", {
+    void sendNotification("🎉 Aktivita dokončena!", {
       body: `${activityName} - získal jsi ${points} bodů`,
       tag: "session-complete",
       requireInteraction: false,

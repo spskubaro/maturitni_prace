@@ -120,7 +120,7 @@ export const TimeTracker = ({ onSessionComplete }: TimeTrackerProps) => {
     if (!selectedActivity) return;
     
     if (seconds < TIME.MIN_SESSION_DURATION_SECONDS) {
-      toast.error(`Timer musí běžet alespoň ${TIME.MIN_SESSION_DURATION_SECONDS} sekund`);
+      toast.error(`Časovač musí běžet alespoň ${TIME.MIN_SESSION_DURATION_SECONDS} sekund`);
       return;
     }
     

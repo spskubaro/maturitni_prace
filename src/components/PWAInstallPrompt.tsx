@@ -31,7 +31,7 @@ export const PWAInstallPrompt = () => {
           <div className="flex-1">
             <h3 className="font-semibold mb-1">Nainstalovat ClimbFlow</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              přidej si aplikaci na plochu pro rychly přistup a offline rezim
+              Přidej si aplikaci na plochu pro rychlý přístup a offline režim.
             </p>
             <div className="flex gap-2">
               <Button onClick={handleInstall} size="sm">
@@ -39,7 +39,7 @@ export const PWAInstallPrompt = () => {
                 Nainstalovat
               </Button>
               <Button onClick={handleDismiss} variant="ghost" size="sm">
-                Pozdeji
+                Později
               </Button>
             </div>
           </div>

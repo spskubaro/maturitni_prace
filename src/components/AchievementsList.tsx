@@ -122,7 +122,7 @@ export const AchievementsList = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="w-5 h-5" />
-          Achievementy ({unlockedAchievements.length}/{achievements.length})
+          Úspěchy ({unlockedAchievements.length}/{achievements.length})
         </CardTitle>
       </CardHeader>
       <CardContent>

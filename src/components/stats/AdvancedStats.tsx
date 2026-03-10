@@ -38,7 +38,7 @@ export const AdvancedStats = ({ sessions }: AdvancedStatsProps) => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Zap className="w-5 h-5 text-primary" />
-              Průměrná session
+              Průměrná aktivita
             </CardTitle>
           </CardHeader>
           <CardContent>
