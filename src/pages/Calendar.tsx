@@ -171,7 +171,7 @@ const Calendar = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 overflow-x-hidden">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Kalendář</h1>
@@ -204,7 +204,7 @@ const Calendar = () => {
           </CardHeader>
 
           <CardContent>
-            <div className="overflow-x-auto pb-2">
+            <div className="w-full max-w-full overflow-x-auto pb-2 overscroll-x-contain">
             <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 min-w-[560px]">
               {["Po", "Út", "St", "Čt", "Pá", "So", "Ne"].map((day) => (
                 <div key={day} className="text-center font-semibold text-xs md:text-sm text-muted-foreground p-1 md:p-2">
@@ -264,7 +264,6 @@ const Calendar = () => {
                   </div>
                 );
               })}
-            </div>
             </div>
             </div>
           </CardContent>
