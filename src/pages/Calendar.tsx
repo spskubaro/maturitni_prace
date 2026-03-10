@@ -19,6 +19,7 @@ import {
   startOfWeek,
   endOfWeek,
   isToday,
+  startOfDay,
 } from "date-fns";
 import { cs } from "date-fns/locale";
 import { defaultActivities } from "@/data/activities";
@@ -110,6 +111,10 @@ const Calendar = () => {
       toast.error("Vyplň všechna pole");
       return;
     }
+    if (isPastDay(selectedDate)) {
+      toast.error("Do minulosti plánovat nejde.");
+      return;
+    }
 
     try {
       const { error } = await supabase.from("planned_activities").insert({
@@ -155,6 +160,8 @@ const Calendar = () => {
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+  const todayStart = startOfDay(new Date());
+  const isPastDay = (day: Date) => startOfDay(day).getTime() < todayStart.getTime();
 
   const getActivitiesForDay = (day: Date) => {
     return plannedActivities.filter((activity) =>
@@ -218,6 +225,7 @@ const Calendar = () => {
                 const dayActivities = getActivitiesForDay(day);
                 const isCurrentMonth = isSameMonth(day, currentMonth);
                 const isDayToday = isToday(day);
+                const isPast = isPastDay(day);
 
                 return (
                   <div
@@ -226,8 +234,12 @@ const Calendar = () => {
                       !isCurrentMonth ? "bg-muted/30 opacity-50" : "bg-background"
                     } ${isDayToday ? "border-primary border-2" : ""} ${
                       selectedDay && isSameDay(day, selectedDay) ? "bg-accent/20 border-accent" : ""
-                    }`}
+                    } ${isPast ? "opacity-60 cursor-not-allowed" : ""}`}
                     onClick={() => {
+                      if (isPast) {
+                        toast.error("Do minulosti plánovat nejde.");
+                        return;
+                      }
                       if (dayActivities.length > 0) {
                         setSelectedDay(day);
                       } else {
@@ -323,10 +335,15 @@ const Calendar = () => {
                 <Button
                   variant="outline"
                   onClick={() => {
+                    if (selectedDay && isPastDay(selectedDay)) {
+                      toast.error("Do minulosti plánovat nejde.");
+                      return;
+                    }
                     setSelectedDate(selectedDay);
                     setIsDialogOpen(true);
                   }}
                   className="w-full"
+                  disabled={selectedDay ? isPastDay(selectedDay) : false}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Přidat aktivitu
