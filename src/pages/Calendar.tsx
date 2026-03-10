@@ -204,6 +204,7 @@ const Calendar = () => {
           </CardHeader>
 
           <CardContent>
+            <div className="overflow-x-auto pb-2">
             <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 min-w-[560px]">
               {["Po", "Út", "St", "Čt", "Pá", "So", "Ne"].map((day) => (
                 <div key={day} className="text-center font-semibold text-xs md:text-sm text-muted-foreground p-1 md:p-2">
@@ -212,7 +213,6 @@ const Calendar = () => {
               ))}
             </div>
 
-            <div className="overflow-x-auto pb-2">
             <div className="grid grid-cols-7 gap-1 md:gap-2 min-w-[560px]">
               {calendarDays.map((day) => {
                 const dayActivities = getActivitiesForDay(day);
@@ -264,6 +264,7 @@ const Calendar = () => {
                   </div>
                 );
               })}
+            </div>
             </div>
             </div>
           </CardContent>
