@@ -34,11 +34,7 @@ const Leaderboard = () => {
       const leaderboardData: LeaderboardEntry[] = [];
 
       if (timeFilter === "all") {
-        const progressResult = await supabase
-          .from("user_progress")
-          .select("user_id, total_points, completed_mountains")
-          .order("total_points", { ascending: false })
-          .limit(100);
+        const progressResult = await supabase.rpc("get_leaderboard_data");
 
         if (progressResult.error) {
         logger.error('Chyba při načítání progressu:', progressResult.error)
@@ -70,28 +66,19 @@ const Leaderboard = () => {
 
         logger.debug(`Načítám leaderboard za ${timeFilter} od ${startDate.toISOString()} do ${endDate.toISOString()}`);
 
-        const sessionsResult = await supabase
-          .from("time_sessions")
-          .select("user_id, points")
-          .gte("created_at", startDate.toISOString())
-          .lte("created_at", endDate.toISOString());
+        const periodResult = await supabase.rpc("get_leaderboard_period", {
+          start_ts: startDate.toISOString(),
+          end_ts: endDate.toISOString(),
+        });
 
-        if (sessionsResult.error) {
-          logger.error('Chyba při načítání sessions:', sessionsResult.error)
-          throw sessionsResult.error
+        if (periodResult.error) {
+          logger.error("Chyba při načítání leaderboardu za období:", periodResult.error);
+          throw periodResult.error;
         }
 
-        logger.debug(`Našlo se ${sessionsResult.data?.length || 0} sessions v tomto období.`);
+        logger.debug(`Našlo se ${periodResult.data?.length || 0} záznamů v tomto období.`);
 
-        const userPointsMap = new Map<string, number>();
-        if (sessionsResult.data && sessionsResult.data.length > 0) {
-          for (const session of sessionsResult.data) {
-            const currentPoints = userPointsMap.get(session.user_id) || 0;
-            userPointsMap.set(session.user_id, currentPoints + session.points);
-          }
-        }
-
-        if (userPointsMap.size === 0) {
+        if (!periodResult.data || periodResult.data.length === 0) {
           logger.debug("V tomto období nejsou žádné sessions.");
           setLeaderboard([]);
           setUserRank(null);
@@ -99,25 +86,16 @@ const Leaderboard = () => {
           return;
         }
 
-        const userIds = Array.from(userPointsMap.keys());
-        const progressResult = await supabase
-          .from("user_progress")
-          .select("user_id, completed_mountains")
-          .in("user_id", userIds);
-
-        for (const userId of userIds) {
-          const points = userPointsMap.get(userId) || 0
-          const progressEntry = progressResult.data?.find(p => p.user_id === userId)
-          
+        for (const entry of periodResult.data) {
           leaderboardData.push({
-            user_id: userId,
-            total_points: points,
-            completed_mountains: progressEntry?.completed_mountains || [],
-          })
+            user_id: entry.user_id,
+            total_points: entry.total_points || 0,
+            completed_mountains: entry.completed_mountains || [],
+          });
         }
-        
+
         leaderboardData.sort((a, b) => b.total_points - a.total_points);
-        
+
         logger.debug(`Leaderboard má ${leaderboardData.length} záznamů.`);
       }
 
