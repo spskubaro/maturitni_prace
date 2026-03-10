@@ -276,12 +276,12 @@ const Leaderboard = () => {
                 } ${entry.rank && entry.rank <= 3 ? "border-2" : ""}`}
               >
                 <CardContent className="pt-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-16 flex justify-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-12 sm:w-16 flex justify-center">
                       {entry.rank && getRankIcon(entry.rank)}
                     </div>
 
-                    <Avatar className={`w-12 h-12 ${entry.rank && entry.rank <= 3 ? getRankBadgeColor(entry.rank) : ""}`}>
+                    <Avatar className={`w-10 h-10 sm:w-12 sm:h-12 ${entry.rank && entry.rank <= 3 ? getRankBadgeColor(entry.rank) : ""}`}>
                       <AvatarFallback className={entry.rank && entry.rank <= 3 ? "text-white" : ""}>
                         {getInitials(entry.email || "?")}
                       </AvatarFallback>
@@ -294,22 +294,22 @@ const Leaderboard = () => {
                           <span className="ml-2 text-xs text-primary">(Ty)</span>
                         )}
                       </div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2 min-w-0">
                         {highestMountain && (
                           <>
                             <Mountain className="w-3 h-3" />
-                            <span>{highestMountain.name}</span>
+                            <span className="truncate">{highestMountain.name}</span>
                           </>
                         )}
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary">
+                    <div className="w-full sm:w-auto text-left sm:text-right flex sm:block items-center justify-between sm:justify-start gap-4">
+                      <div className="text-xl sm:text-2xl font-bold text-primary">
                         {entry.total_points.toLocaleString()}
                       </div>
                       <div className="text-xs text-muted-foreground">bodů</div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-xs text-muted-foreground sm:mt-1">
                         <Award className="w-3 h-3 inline mr-1" />
                         {entry.completed_mountains?.length || 0} hor
                       </div>
